@@ -26,10 +26,10 @@ int main()
     string readLine;
     int timestep, natoms;
 
-    /*Initializing the velocity sums and avereage variables for the entire timesteps*/
+    /*Initializing the velocity avereage variables and temperature average variable for the entire timesteps*/
     double VrTimeAvg=0.0;
     double VzTimeAvg=0.0;
-
+    double TempTimeSumAvg=0.0;
     /*Getting info about the number of timesteps*/
     cout<<endl<<"Enter the number of timesteps: ";
     cin>>timestep;
@@ -108,7 +108,7 @@ int main()
         double vrAvg, vzAvg, vthAvg;
         double VrDiffSq, VthDiffSq, VzDiffSq;
         double VrDiffSqSum=0.0, VthDiffSqSum=0.0, VzDiffSqSum=0.0;
-        double TempAvg=0.0;
+        double TempBinAvg=0.0;
         int counter=0;
         out<<"\n r(lower)\t r(upper)\t z(lower)\t z(upper)\t Vr(avg)\t Vz(avg)";
         zu1=zup;
@@ -178,13 +178,14 @@ int main()
                       { VzDiffSq=pow((*it -vzAvg),2);
                         VzDiffSqSum+=VzDiffSq;
                       }
-
+                    TempBinAvg=(VrDiffSqSum+VthDiffSqSum+VzDiffSqSum)/(3*counter);
                 }
 
 
                 out<<"\n"<<rl1<<"\t"<<ru1<<"\t"<<zl1<<"\t"<<zu1<<"\t"<<vrAvg<<"\t"<<vzAvg;
                 VrTimeSum[a][b]+=vrAvg;
                 VzTimeSum[a][b]+=vzAvg;
+                TempTimeSum[a][b]+=TempBinAvg;
                 rl1=ru1;
             }
             zl1=zu1;
@@ -198,7 +199,7 @@ int main()
     ofstream outfinal("vTimeAvg.txt");
     zu1=zup;
     zl1=zlow;
-    outfinal<<"\n r(lower)\t r(upper)\t z(lower)\t z(upper)\t r(mid)\t z(mid)\t Vr(time avg)\t Vz(time avg)";
+    outfinal<<"\n r(lower)\t r(upper)\t z(lower)\t z(upper)\t r(mid)\t z(mid)\t Vr(time avg)\t Vz(time avg)\t Temp(time avg)";
     for(int l=0; l<zdiv; l++)
     {
         zu1=zl1+((zup-zlow)/zdiv);
@@ -211,7 +212,8 @@ int main()
             double zMid=(zu1+zl1)/2;
             VrTimeAvg=VrTimeSum[l][m]/timestep;
             VzTimeAvg=VzTimeSum[l][m]/timestep;
-            outfinal<<"\n"<<rl1<<"\t"<<ru1<<"\t"<<zl1<<"\t"<<zu1<<"\t"<<rMid<<"\t"<<zMid<<"\t"<<VrTimeAvg<<"\t"<<VzTimeAvg;
+            TempTimeSumAvg=TempTimeSum[l][m]/timestep;
+            outfinal<<"\n"<<rl1<<"\t"<<ru1<<"\t"<<zl1<<"\t"<<zu1<<"\t"<<rMid<<"\t"<<zMid<<"\t"<<VrTimeAvg<<"\t"<<VzTimeAvg<<"\t"<<TempTimeSumAvg;
             rl1=ru1;
         }
         zl1=zu1;
@@ -220,9 +222,14 @@ int main()
     for(int i=0; i<zdiv; i++)
         delete [] VrTimeSum[i];
     delete [] VrTimeSum;
+
     for(int i=0; i<zdiv; i++)
         delete [] VzTimeSum[i];
     delete [] VzTimeSum;
+
+    for(int i=0; i<zdiv; i++)
+        delete [] TempTimeSum[i];
+    delete [] TempTimeSum;
 
     return 0;
 }
