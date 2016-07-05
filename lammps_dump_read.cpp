@@ -118,10 +118,10 @@ int main()
                 counter=0;
                 for(int c=0; c<natoms; c++)
                 {
-                    if(ld[c].r<=ru1 && ld[c].r>=rl1 && ld[c].z<=zu1 && ld[c].z>=zl1)      //Checking whether the atom is within the limits//
-                    {   vrSum+=ld[c].vr;
-                        vzSum+=ld[c].vz;
-                        counter++;
+                    if(ld[c].r<=ru1 && ld[c].r>=rl1 && ld[c].z<=zu1 && ld[c].z>=zl1)    //Checking whether the particle is within the bin limits//
+                    {   vrSum+=ld[c].vr;    //Adding the velocity (in the r direction) of the particle to the velocity sum of the particles in the bin//
+                        vzSum+=ld[c].vz;    //Adding the velocity (in the z direction) of the particle to the velocity sum of the particles in the bin//
+                        counter++;    //Updating the counter of the number of particles in the bin. To be used in finding the average//
 
                     }
 
