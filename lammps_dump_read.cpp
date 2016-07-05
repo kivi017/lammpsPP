@@ -153,15 +153,15 @@ int main()
 
                     VrDiffSq=0.0;
                     for(vector<int>::iterator it=Vr.begin(); it != Vr.end(); ++it)
-                      VrDiffSq=(*it -vrAvg)^2;
+                      VrDiffSq=pow((*it -vrAvg),2.0);
 
                     VthDiffSq=0.0;
                     for(vector<int>::iterator it=Vth.begin(); it != Vth.end(); ++it)
-                      VthDiffSq=(*it -vthAvg)^2;
+                      VthDiffSq=pow((*it -vthAvg),2.0);
 
                     VrDiffSq=0.0;
                     for(vector<int>::iterator it=Vz.begin(); it != Vz.end(); ++it)
-                      VzDiffSq=(*it -vzAvg)^2;
+                      VzDiffSq=pow((*it -vzAvg),2);
                 }
 
 
