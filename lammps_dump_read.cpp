@@ -151,7 +151,7 @@ int main()
     ofstream outfinal("vTimeAvg.txt");
     zu1=zup;
     zl1=zlow;
-    outfinal<<"\n r(lower)\t r(upper)\t z(lower)\t z(upper)\t Vr(time avg)\t Vz(time avg)";
+    outfinal<<"\n r(lower)\t r(upper)\t z(lower)\t z(upper)\t r(mid)\t z(mid)\t Vr(time avg)\t Vz(time avg)";
     for(int l=0; l<zdiv; l++)
     {
         zu1=zl1+((zup-zlow)/zdiv);
@@ -160,9 +160,11 @@ int main()
         for(int m=0; m<rdiv; m++)
         {
             ru1=rl1+((rup-rlow)/rdiv);
+            double rMid=(ru1+rl1)/2;
+            double zMid=(zu1+zl1)/2;
             VrTimeAvg=VrTimeSum[l][m]/timestep;
             VzTimeAvg=VzTimeSum[l][m]/timestep;
-            outfinal<<"\n"<<rl1<<"\t"<<ru1<<"\t"<<zl1<<"\t"<<zu1<<"\t"<<VrTimeAvg<<"\t"<<VzTimeAvg;
+            outfinal<<"\n"<<rl1<<"\t"<<ru1<<"\t"<<zl1<<"\t"<<zu1<<"\t"<<rMid<<"\t"<<zMid<<"\t"<<VrTimeAvg<<"\t"<<VzTimeAvg;
             rl1=ru1;
         }
         zl1=zu1;
