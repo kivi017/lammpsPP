@@ -2,6 +2,7 @@
 #include<fstream>
 #include<string>
 #include<cmath>
+#include<vector>
 
 using namespace std;
 
@@ -126,9 +127,9 @@ int main()
                     if(ld[c].r<=ru1 && ld[c].r>=rl1 && ld[c].z<=zu1 && ld[c].z>=zl1)    //Checking whether the particle is within the bin limits//
                     {   vrSum+=ld[c].vr;    //Adding the velocity (in the 'r' direction) of the particle to the velocity sum of the particles in the bin//
                         vzSum+=ld[c].vz;    //Adding the velocity (in the 'z' direction) of the particle to the velocity sum of the particles in the bin//
-                        Vr.push(ld[c].vr);
-                        Vth.push(ld[c].vth);
-                        Vz.push(ld[c].vz);
+                        Vr.push_back(ld[c].vr);
+                        Vth.push_back(ld[c].vth);
+                        Vz.push_back(ld[c].vz);
                         counter++;    //Updating the counter of the number of particles in the bin. To be used in finding the average//
 
                     }
