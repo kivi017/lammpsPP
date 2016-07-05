@@ -58,6 +58,10 @@ int main()
     for(int j=0; j<zdiv; j++)
         VzTimeSum[j]=new double[rdiv];
 
+    double** TempTimeSum=new double*[zdiv];
+    for(int j=0; j<zdiv; j++)
+        TempTimeSum[j]=new double[rdiv];
+
     /*Finding the lower and upper limits of r and z*/
     double zlow=min(z1,z2);
     double rlow=min(r1,r2);
@@ -103,14 +107,16 @@ int main()
         double vrSum=0.0, vzSum=0.0, vthSum=0.0;        //Declaring and initializing the velocity sum variables//
         double vrAvg, vzAvg, vthAvg;
         double VrDiffSq, VthDiffSq, VzDiffSq;
+        double VrDiffSqSum=0.0, VthDiffSqSum=0.0, VzDiffSqSum=0.0;
+        double TempAvg=0.0;
         int counter=0;
         out<<"\n r(lower)\t r(upper)\t z(lower)\t z(upper)\t Vr(avg)\t Vz(avg)";
         zu1=zup;
         zl1=zlow;
 
-        vector <double> Vr;   //Vector to store the velocity(in the 'r' direction) of the individual particles in a bin
-        vector <double> Vth;    //Vector to store the velocity(in the 'th' direction) of the individual particles in a bin
-        vector <double> Vz;   //Vector to store the velocity(in the 'z' direction) of the individual particles in a bin
+        std::vector <double> Vr;   //Vector to store the velocity(in the 'r' direction) of the individual particles in a bin
+        std::vector <double> Vth;    //Vector to store the velocity(in the 'th' direction) of the individual particles in a bin
+        std::vector <double> Vz;   //Vector to store the velocity(in the 'z' direction) of the individual particles in a bin
 
         for(int a=0; a<zdiv; a++)       //Loop for z limits division //
         {
@@ -151,17 +157,28 @@ int main()
                     vzAvg=vzSum/counter;
                     vthAvg=vthSum/counter;
 
+                    /*Calculations for finding the temperature*/
                     VrDiffSq=0.0;
-                    for(vector<int>::iterator it=Vr.begin(); it != Vr.end(); ++it)
-                      VrDiffSq=pow((*it -vrAvg),2.0);
+                    VrDiffSqSum=0.0;
+                    for(std::vector<double>::iterator it=Vr.begin(); it != Vr.end(); ++it)
+                      { VrDiffSq=pow((*it -vrAvg),2.0);
+                        VrDiffSqSum+=VrDiffSq;
+                      }
 
                     VthDiffSq=0.0;
-                    for(vector<int>::iterator it=Vth.begin(); it != Vth.end(); ++it)
-                      VthDiffSq=pow((*it -vthAvg),2.0);
+                    VthDiffSqSum=0.0;
+                    for(std::vector<double>::iterator it=Vth.begin(); it != Vth.end(); ++it)
+                      { VthDiffSq=pow((*it -vthAvg),2.0);
+                        VthDiffSqSum+=VthDiffSq;
+                      }
 
-                    VrDiffSq=0.0;
-                    for(vector<int>::iterator it=Vz.begin(); it != Vz.end(); ++it)
-                      VzDiffSq=pow((*it -vzAvg),2);
+                    VzDiffSq=0.0;
+                    VzDiffSqSum=0.0;
+                    for(std::vector<double>::iterator it=Vz.begin(); it != Vz.end(); ++it)
+                      { VzDiffSq=pow((*it -vzAvg),2);
+                        VzDiffSqSum+=VzDiffSq;
+                      }
+
                 }
 
 
