@@ -105,6 +105,11 @@ int main()
         out<<"\n r(lower)\t r(upper)\t z(lower)\t z(upper)\t Vr(avg)\t Vz(avg)";
         zu1=zup;
         zl1=zlow;
+
+        vector <double> Vr;   //Vector to store the velocity(in the 'r' direction) of the individual particles in a bin
+        vector <double> Vth;    //Vector to store the velocity(in the 'th' direction) of the individual particles in a bin
+        vector <double> Vz;   //Vector to store the velocity(in the 'z' direction) of the individual particles in a bin
+
         for(int a=0; a<zdiv; a++)       //Loop for z limits division //
         {
             zu1=zl1+((zup-zlow)/zdiv);
@@ -119,19 +124,22 @@ int main()
                 for(int c=0; c<natoms; c++)
                 {
                     if(ld[c].r<=ru1 && ld[c].r>=rl1 && ld[c].z<=zu1 && ld[c].z>=zl1)    //Checking whether the particle is within the bin limits//
-                    {   vrSum+=ld[c].vr;    //Adding the velocity (in the r direction) of the particle to the velocity sum of the particles in the bin//
-                        vzSum+=ld[c].vz;    //Adding the velocity (in the z direction) of the particle to the velocity sum of the particles in the bin//
+                    {   vrSum+=ld[c].vr;    //Adding the velocity (in the 'r' direction) of the particle to the velocity sum of the particles in the bin//
+                        vzSum+=ld[c].vz;    //Adding the velocity (in the 'z' direction) of the particle to the velocity sum of the particles in the bin//
+                        Vr.push(ld[c].vr);
+                        Vth.push(ld[c].vth);
+                        Vz.push(ld[c].vz);
                         counter++;    //Updating the counter of the number of particles in the bin. To be used in finding the average//
 
                     }
 
                 }
-                if(counter==0)
+                if(counter==0)    //Checking whether there are particles in the selected bin//
                 {
                     vrAvg=0;
                     vzAvg=0;
                 }
-                else
+                else    //Computing the average velocity of the particles in the bin//
                 {
                     vrAvg=vrSum/counter;
                     vzAvg=vzSum/counter;
