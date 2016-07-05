@@ -14,7 +14,8 @@ struct lammpsdata
     double vr;  //Variable to store the velocity along r
     double vth;   //Variable to store the velocity along theta
     double vz;    //Variable to store the velocity along z
-
+    double vx;    //Variable to store the velocity along x
+    double vy;    //Variable to store the velocity along y
 };
 
 
@@ -78,7 +79,7 @@ int main()
         for(int p=0; p<21; p++)
             inp>>readLine;
         lammpsdata* ld= new lammpsdata[natoms]; //Allocating structure using 'new'
-        double x,y,vx,vy,tht;
+        double x,y,tht;
 
         /*Storing the data from the Lammps dump file into the data structure*/
         for(int i=0; i<natoms; i++)
@@ -87,14 +88,14 @@ int main()
             inp>>x;
             inp>>y;
             inp>>ld[i].z;
-            inp>>vx;
-            inp>>vy;
+            inp>>ld[i].vx;
+            inp>>ld[i].vy;
             inp>>ld[i].vz;
             ld[i].r=sqrt((x*x)+(y*y));
             ld[i].th=(atan(y/x));
             tht=(atan(y/x));
-            ld[i].vr=(vx*cos(tht))+(vy*sin(tht));
-            ld[i].vth=-vx*sin(tht)+vy*cos(tht);
+            ld[i].vr=(ld[i].vx*cos(tht))+(ld[i].vy*sin(tht));
+            ld[i].vth=-ld[i].vx*sin(tht)+ld[i].vy*cos(tht);
 
         }
 
