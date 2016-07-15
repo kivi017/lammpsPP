@@ -146,6 +146,7 @@ int getDumpInfo(const char* file, struct dumpInfo* info)
 	}
     }
   info->last_timestep=step;
+  cout<<"## Collecting information from the dump file : "<<file<<endl;
   cout<<"First Timestep:"<<info->first_timestep<<endl;
   cout<<"Last Timestep:"<<info->last_timestep<<endl;
   cout<<"Dump Frequency:"<<info->dump_frequency<<endl;
@@ -157,6 +158,84 @@ int getDumpInfo(const char* file, struct dumpInfo* info)
   for(int i = 0;i < static_cast<int>(info->atom_info.size());i++)
     cout<<info->atom_info[i]<<" ";
   cout<<endl;
+  inp.close();
+  return 1;
+}
+
+// Reads atom data for one timestep from a dump file
+
+// Arguments :-
+// struct dumpInfo* info - (Input) - This gives all the information for reading the dump file
+// int timestep - (Input) - Timestep for which you want the data to be read
+// struct timestepData* tdata - (Output) - The data will be stored here
+
+// Return values :-
+// 0 - If something goes wrong
+// 1 - Otherwise
+
+int getTimestepData(struct dumpInfo* info, int timestep, struct timestepData* tdata)
+{
+  int i, j;
+  int step;
+  bool correct_step = false;
+  double check;
+  double value;
+  string temp;
+  string line;
+  
+  if(strcmp(info->filename.c_str(),"")==0)
+    {
+      cout<<"Trying to read timestep data before collecting dump info"<<endl;
+      return 0;
+    }
+
+  check = (timestep - info->first_timestep) / info->dump_frequency;
+  if(floor(check) != check)
+    {
+      cout<<"Information for timestep "<<timestep<<" may not be present in the dumpfile : "<<info->filename<<endl;
+      return 0;
+    }
+  
+  ifstream inp (info->filename);
+
+  if(!inp.is_open())
+    {
+      cout<<"Error opening the file :"<<info->filename<<endl;
+      return 0;
+    }
+  
+  inp.clear();
+  inp.seekg(check * (info->number_of_atoms * static_cast<int>(info->atom_info.size()) * sizeof(double)), ios::beg);
+
+  while(getline(inp, line))
+    {
+      istringstream iss(line);
+      iss>>temp;
+      if(strcmp(temp.c_str(),"ITEM:")==0)
+	{
+	  iss>>temp;
+	  if(strcmp(temp.c_str(),"TIMESTEP")==0)
+	    {
+	      inp>>step;
+	      if(step == timestep)
+		correct_step = true;
+	    }
+	  else if(strcmp(temp.c_str(),"ATOMS")==0 && correct_step)
+	    {
+	      break;
+	    }
+	}
+    }
+  int num_cols = info->atom_info.size();
+  for(i = 0;i < info->number_of_atoms;i++)
+    {
+      tdata->data.push_back(vector <double>());
+      for(j = 0;j < num_cols;j++)
+	{
+	  inp>>value;
+	  tdata->data[i].push_back(value);
+	}
+    }
   inp.close();
   return 1;
 }
@@ -208,39 +287,33 @@ int main()
     double zu1;
     double rl1=rlow;
     double ru1; //Defining the limits to be used within the loop//
-    ifstream inp("dump.flow");  /*Opening the dump file to read the data*/
+    //ifstream inp("dump.flow");  /*Opening the dump file to read the data*/
     ofstream out("vflow.txt");  /*Opening a file to write the velocity for each bins for the single timesteps*/
     
     getDumpInfo("dump.flow", &info);
     
     /*Loop for processing the data from the file */
-    for(int z=0; z<timestep; z++)
-    {
-        for(int p=0; p<7; p++)
-        inp>>readLine;
-        inp>>natoms;
-        cout<<endl<<"No of atoms: \t"<<natoms<<endl;
-        for(int p=0; p<21; p++)
-            inp>>readLine;
-        lammpsdata* ld= new lammpsdata[natoms]; //Allocating structure using 'new'
+    for(int z=info.first_timestep; z<=info.last_timestep; z+=info.dump_frequency)
+      {
+	struct timestepData tdata;
+	getTimestepData(&info, z, &tdata);
+        lammpsdata* ld= new lammpsdata[info.number_of_atoms]; //Allocating structure using 'new'
         double x,y,vx,vy,tht;
-    
         /*Storing the data from the Lammps dump file into the data structure*/
-      for(int i=0; i<natoms; i++)
-        {
-            inp>>ld[i].id;
-            inp>>x;
-            inp>>y;
-            inp>>ld[i].z;
-            inp>>vx;
-            inp>>vy;
-            inp>>ld[i].vz;
+	for(int i=0; i<info.number_of_atoms; i++)
+	  {
+	    ld[i].id = tdata.data[i][0];
+	    x = tdata.data[i][1];
+	    y = tdata.data[i][2];
+            ld[i].z = tdata.data[i][3];
+            vx = tdata.data[i][4];
+            vy = tdata.data[i][5];
+            ld[i].vz = tdata.data[i][6];
             ld[i].r=sqrt((x*x)+(y*y));
             ld[i].th=(atan(y/x));
             tht=(atan(y/x));
             ld[i].vr=(vx*cos(tht))+(vy*sin(tht));
             ld[i].vth=-vx*sin(tht)+vy*cos(tht);
-
         }
 
         double vrSum=0.0, vzSum=0.0;        //Declaring and initializing the velocity sum variables//
@@ -287,12 +360,12 @@ int main()
             }
             zl1=zu1;
         }
-            delete []ld;
-        }
+	delete []ld;
+      }
 
 
     out.close();
-    inp.close();
+    
     ofstream outfinal("vTimeAvg.txt");
     zu1=zup;
     zl1=zlow;

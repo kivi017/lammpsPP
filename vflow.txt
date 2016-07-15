@@ -1,4 +1,16 @@
 
  r(lower)	 r(upper)	 z(lower)	 z(upper)	 Vr(avg)	 Vz(avg)
-0	2	0	5	-0.00354894	0.000404925
-0	2	5	10	0	0
+0	5	0	5	0	0
+5	10	0	5	0	0
+0	5	5	10	0	0
+5	10	5	10	0	0
+ r(lower)	 r(upper)	 z(lower)	 z(upper)	 Vr(avg)	 Vz(avg)
+0	5	0	5	0	0
+5	10	0	5	0	0
+0	5	5	10	0	0
+5	10	5	10	0	0
+ r(lower)	 r(upper)	 z(lower)	 z(upper)	 Vr(avg)	 Vz(avg)
+0	5	0	5	0	0
+5	10	0	5	0	0
+0	5	5	10	0	0
+5	10	5	10	0	0

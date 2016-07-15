@@ -2,4 +2,5 @@ lammps_dump_read
 *.o
 *~
 #*
-
+.DS_Store
+*.dSYM
