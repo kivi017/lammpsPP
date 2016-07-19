@@ -196,7 +196,7 @@ int getTimestepData(struct dumpInfo* info, int timestep, struct timestepData* td
       return 0;
     }
   
-  ifstream inp (info->filename);
+  ifstream inp(info->filename.c_str());
 
   if(!inp.is_open())
     {
